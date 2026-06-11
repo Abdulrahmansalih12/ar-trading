@@ -225,8 +225,15 @@
   .trow button{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
   .trow button:hover{color:var(--danger);border-color:var(--danger)}
   .sheet-empty{color:var(--muted);font-size:13px;text-align:center;padding:14px}
-  .sheet-add{display:flex;gap:8px;margin-bottom:10px}
-  .sheet-add input{flex:1;background:var(--ink);border:1px solid var(--border);border-radius:11px;color:var(--text);font-family:var(--mono);font-size:16px;padding:12px;text-align:center}
+  .wl-toggle{display:flex;gap:8px;margin-bottom:10px}
+  .wl-toggle button{flex:1;padding:11px;border-radius:11px;border:1px solid var(--border);background:var(--ink);color:var(--muted);font-family:var(--ar);font-size:14px;font-weight:700;cursor:pointer;transition:all .18s}
+  .wl-toggle button[data-wl="win"].active{background:rgba(61,220,151,.16);border-color:var(--buy);color:var(--buy)}
+  .wl-toggle button[data-wl="loss"].active{background:rgba(240,85,107,.16);border-color:var(--sell);color:var(--sell)}
+  .note-in{width:100%;background:var(--ink);border:1px solid var(--border);border-radius:11px;color:var(--text);font-family:var(--ar);font-size:14px;padding:11px;margin-bottom:10px}
+  .note-in:focus{outline:none;border-color:var(--gold-2)}
+  .trow .tinfo{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .trow .tnote{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+  .sheet-add{display:flex;gap:8px;margin-bottom:10px}  .sheet-add input{flex:1;background:var(--ink);border:1px solid var(--border);border-radius:11px;color:var(--text);font-family:var(--mono);font-size:16px;padding:12px;text-align:center}
   .sheet-add input:focus{outline:none;border-color:var(--gold-2)}
   .sheet-add button{padding:0 22px;border-radius:11px;border:1px solid var(--gold-2);background:linear-gradient(180deg,rgba(233,196,106,.16),rgba(233,196,106,.05));color:var(--gold);font-weight:800;font-size:20px;cursor:pointer}
   .sheet-total{display:flex;justify-content:space-between;align-items:center;font-size:14px;border-top:1px solid var(--border-soft);padding-top:12px}
@@ -449,7 +456,9 @@
 <div class="modal" id="calModal"><div class="sheet">
   <div class="sheet-h"><b id="mDate"></b><button id="mClose">✕</button></div>
   <div class="sheet-list" id="mList"></div>
-  <div class="sheet-add"><input id="mPnl" type="number" inputmode="numeric" placeholder="±$"><button id="mAdd">+</button></div>
+  <div class="wl-toggle"><button id="wlWin" class="active" data-wl="win" data-i18n="t_win">ربح ✓</button><button id="wlLoss" data-wl="loss" data-i18n="t_loss">خسارة ✗</button></div>
+  <div class="sheet-add"><input id="mPnl" type="number" inputmode="decimal" placeholder="$"><button id="mAdd">+</button></div>
+  <input id="mNote" type="text" class="note-in" placeholder="ملاحظة (اختياري)">
   <div class="sheet-total"><span data-i18n="cal_daytotal">إجمالي اليوم</span><b id="mTotal">$0</b></div>
 </div></div>
 
@@ -507,7 +516,7 @@ var STR={
     calc_h:"حجم العقد",calc_p:"تربط ستوبك بحدود حسابك الفعّال.",mini:"ميني",micro:"مايكرو",stop_lbl:"مسافة الستوب (نقاط)",risk_lbl:"المخاطرة ($)",contracts:"عقد",actual_risk:"المخاطرة الفعلية",per_contract:"مخاطرة العقد الواحد",before_brake:"صفقات قبل الفرامل اليومية",
     v_ok:"✓ ضمن حدودك — مخاطرة $R",v_warn_risk:"⚠️ المخاطرة $R أكبر من حدّك (300$). صغّر.",v_cap:"وصلت أقصى عقود (C). مخاطرة $R.",v_bad:"ستوبك واسع — صغّر الستوب أو استخدم المايكرو.",v_input:"دخّل أرقام صحيحة",v_noacct:"فعّل حساب أول من صفحة الحسابات",
     rules_h:"قوانين الحساب",r_target:"هدف الربح",r_mll:"خسارة قصوى MLL",r_dll:"خسارة يومية DLL",r_cap:"أقصى ربح/يوم",r_pos:"أقصى عقود",r_size:"حجم الحساب",r_noacct:"ما في حساب فعّال — أضف من صفحة الحسابات",
-    cal_h:"الكاليندر",cal_p:"كل يوم: عدد الصفقات والربح/الخسارة. والإجمالي الأسبوعي.",cal_week:"الأسبوع",cal_month:"إجمالي الشهر",cal_trades:"صفقات",cal_greendays:"أيام رابحة",cal_reddays:"أيام خاسرة",cal_daytotal:"إجمالي اليوم",cal_notrades:"ما في صفقات بهذا اليوم — أضف وحدة تحت",cal_pnl_ph:"ربح/خسارة بالدولار، مثال 250 أو -120",
+    cal_h:"الكاليندر",cal_p:"كل يوم: عدد الصفقات والربح/الخسارة. والإجمالي الأسبوعي.",cal_week:"الأسبوع",cal_month:"إجمالي الشهر",cal_trades:"صفقات",cal_greendays:"أيام رابحة",cal_reddays:"أيام خاسرة",cal_daytotal:"إجمالي اليوم",cal_notrades:"ما في صفقات بهذا اليوم — أضف وحدة تحت",cal_pnl_ph:"ربح/خسارة بالدولار، مثال 250 أو -120",t_win:"ربح ✓",t_loss:"خسارة ✗",t_amount:"المبلغ بالدولار",t_note:"ملاحظة (اختياري)",
     nav_growth:"النمو",g_h:"نموّك",g_p:"يتحدّث تلقائياً من الكاليندر والحساب الفعّال.",g_target_to:"الهدف",g_remaining:"باقي $R للهدف",g_reached:"🎉 وصلت الهدف!",g_no_target:"فعّل حساب حتى يطلع الهدف",g_equity:"منحنى رأس المال",g_winrate:"نسبة الربح",g_avgwin:"متوسط الربح",g_avgloss:"متوسط الخسارة",g_best:"أحسن يوم",g_worst:"أسوأ يوم",g_totalpl:"إجمالي الربح",g_trades:"الصفقات",g_onetrade:"أيام صفقة وحدة",g_disc_p:"نسبة الأيام اللي التزمت بيها بصفقة وحدة بس.",g_streak:"سلسلة نظيفة:",g_days:"يوم",g_backup:"نسخ احتياطي",g_export:"تصدير (انسخ النص واحفظه):",g_import:"استيراد (الصق النص واضغط تطبيق):",g_copy:"📋 نسخ",g_apply:"⬇ تطبيق",g_copied:"✓ تم النسخ",g_imported:"✓ تم الاستيراد",g_badimport:"النص غير صالح",ses_open:"جلسة لندن مفتوحة — وقت دخولك ⚡",
     ph_tokyo:"طوكيو يبني سيولة",ph_sweep:"لندن تسحب السيولة",ph_disp:"إزاحة — FVG يتكوّن",ph_entry:"رجوع للـ FVG — الدخول",ph_target:"الهدف: سيولة الجهة الثانية",edit_ph:"اكتب النص…"},
   en:{hero_eyebrow:"TOKYO SWEEP → LONDON ENTRY",hero_tag:"Price hunts liquidity. You hunt discipline.",live:"LIVE SETUP",
@@ -521,7 +530,7 @@ var STR={
     calc_h:"Position Size",calc_p:"Links your stop to your active account limits.",mini:"Mini",micro:"Micro",stop_lbl:"Stop distance (points)",risk_lbl:"Risk ($)",contracts:"contracts",actual_risk:"Actual risk",per_contract:"Risk per contract",before_brake:"Trades before daily brake",
     v_ok:"✓ Within limits — risk $R",v_warn_risk:"⚠️ Risk $R exceeds your cap ($300). Reduce.",v_cap:"Max contracts reached (C). Risk $R.",v_bad:"Stop too wide — tighten it or use micro.",v_input:"Enter valid numbers",v_noacct:"Activate an account first",
     rules_h:"Account Rules",r_target:"Profit target",r_mll:"Max loss MLL",r_dll:"Daily loss DLL",r_cap:"Max profit/day",r_pos:"Max contracts",r_size:"Account size",r_noacct:"No active account — add one in Accounts",
-    cal_h:"Calendar",cal_p:"Each day: trade count and P/L. Plus weekly totals.",cal_week:"Week",cal_month:"Month",cal_trades:"Trades",cal_greendays:"Green days",cal_reddays:"Red days",cal_daytotal:"Day total",cal_notrades:"No trades this day — add one below",cal_pnl_ph:"P/L in $, e.g. 250 or -120",
+    cal_h:"Calendar",cal_p:"Each day: trade count and P/L. Plus weekly totals.",cal_week:"Week",cal_month:"Month",cal_trades:"Trades",cal_greendays:"Green days",cal_reddays:"Red days",cal_daytotal:"Day total",cal_notrades:"No trades this day — add one below",cal_pnl_ph:"P/L in $, e.g. 250 or -120",t_win:"Win ✓",t_loss:"Loss ✗",t_amount:"Amount in $",t_note:"Note (optional)",
     nav_growth:"Growth",g_h:"Your Growth",g_p:"Updates automatically from the calendar and active account.",g_target_to:"Target",g_remaining:"$R left to target",g_reached:"🎉 Target reached!",g_no_target:"Activate an account to see the target",g_equity:"Equity curve",g_winrate:"Win rate",g_avgwin:"Avg win",g_avgloss:"Avg loss",g_best:"Best day",g_worst:"Worst day",g_totalpl:"Total P/L",g_trades:"Trades",g_onetrade:"One-trade days",g_disc_p:"Share of days you kept to a single trade.",g_streak:"Clean streak:",g_days:"days",g_backup:"Backup",g_export:"Export (copy and save this text):",g_import:"Import (paste text, then apply):",g_copy:"📋 Copy",g_apply:"⬇ Apply",g_copied:"✓ Copied",g_imported:"✓ Imported",g_badimport:"Invalid text",ses_open:"London session open — your entry window ⚡",
     ph_tokyo:"Tokyo builds liquidity",ph_sweep:"London sweeps liquidity",ph_disp:"Displacement — FVG forms",ph_entry:"Return to FVG — entry",ph_target:"Target: opposite liquidity",edit_ph:"Type text…"},
   de:{hero_eyebrow:"TOKYO SWEEP → LONDON ENTRY",hero_tag:"Der Preis jagt Liquidität. Du jagst Disziplin.",live:"LIVE SETUP",
@@ -535,7 +544,7 @@ var STR={
     calc_h:"Positionsgröße",calc_p:"Verbindet deinen Stop mit den Limits des aktiven Kontos.",mini:"Mini",micro:"Mikro",stop_lbl:"Stop-Distanz (Punkte)",risk_lbl:"Risiko ($)",contracts:"Kontrakte",actual_risk:"Tatsächliches Risiko",per_contract:"Risiko pro Kontrakt",before_brake:"Trades bis zur Tagesbremse",
     v_ok:"✓ Im Limit — Risiko $R",v_warn_risk:"⚠️ Risiko $R über deinem Limit ($300). Reduzieren.",v_cap:"Max. Kontrakte erreicht (C). Risiko $R.",v_bad:"Stop zu weit — enger setzen oder Mikro.",v_input:"Gültige Zahlen eingeben",v_noacct:"Erst ein Konto aktivieren",
     rules_h:"Kontoregeln",r_target:"Gewinnziel",r_mll:"Max. Verlust MLL",r_dll:"Tagesverlust DLL",r_cap:"Max. Gewinn/Tag",r_pos:"Max. Kontrakte",r_size:"Kontogröße",r_noacct:"Kein aktives Konto — in Konten hinzufügen",
-    cal_h:"Kalender",cal_p:"Pro Tag: Trade-Anzahl und G/V. Plus Wochensummen.",cal_week:"Woche",cal_month:"Monat",cal_trades:"Trades",cal_greendays:"Grüne Tage",cal_reddays:"Rote Tage",cal_daytotal:"Tagessumme",cal_notrades:"Keine Trades — unten hinzufügen",cal_pnl_ph:"G/V in $, z.B. 250 oder -120",
+    cal_h:"Kalender",cal_p:"Pro Tag: Trade-Anzahl und G/V. Plus Wochensummen.",cal_week:"Woche",cal_month:"Monat",cal_trades:"Trades",cal_greendays:"Grüne Tage",cal_reddays:"Rote Tage",cal_daytotal:"Tagessumme",cal_notrades:"Keine Trades — unten hinzufügen",cal_pnl_ph:"G/V in $, z.B. 250 oder -120",t_win:"Gewinn ✓",t_loss:"Verlust ✗",t_amount:"Betrag in $",t_note:"Notiz (optional)",
     nav_growth:"Wachstum",g_h:"Dein Wachstum",g_p:"Aktualisiert sich automatisch aus Kalender und aktivem Konto.",g_target_to:"Ziel",g_remaining:"$R bis zum Ziel",g_reached:"🎉 Ziel erreicht!",g_no_target:"Aktiviere ein Konto für das Ziel",g_equity:"Equity-Kurve",g_winrate:"Trefferquote",g_avgwin:"Ø Gewinn",g_avgloss:"Ø Verlust",g_best:"Bester Tag",g_worst:"Schlechtester Tag",g_totalpl:"Gesamt G/V",g_trades:"Trades",g_onetrade:"Ein-Trade-Tage",g_disc_p:"Anteil der Tage mit nur einem Trade.",g_streak:"Saubere Serie:",g_days:"Tage",g_backup:"Backup",g_export:"Export (Text kopieren und speichern):",g_import:"Import (Text einfügen, dann anwenden):",g_copy:"📋 Kopieren",g_apply:"⬇ Anwenden",g_copied:"✓ Kopiert",g_imported:"✓ Importiert",g_badimport:"Ungültiger Text",ses_open:"London-Session offen — dein Einstiegsfenster ⚡",
     ph_tokyo:"Tokio baut Liquidität auf",ph_sweep:"London sweept Liquidität",ph_disp:"Displacement — FVG entsteht",ph_entry:"Rückkehr zur FVG — Einstieg",ph_target:"Ziel: Gegenliquidität",edit_ph:"Text eingeben…"}
 };
@@ -730,7 +739,8 @@ function applyLang(){
   renderStrat();renderCheck();updateGate();renderChip();renderAccts();renderRules();calc();
   if(typeof renderGrowth==='function')renderGrowth();
   if(typeof renderCal==='function')renderCal();
-  var mp=document.getElementById('mPnl');if(mp)mp.placeholder=t('cal_pnl_ph');
+  var mp=document.getElementById('mPnl');if(mp)mp.placeholder=t('t_amount');
+  var mn=document.getElementById('mNote');if(mn)mn.placeholder=t('t_note');
 }
 document.querySelectorAll('.langs button').forEach(function(b){b.addEventListener('click',function(){LANG=b.getAttribute('data-lang');store.set('ar_lang',LANG);applyLang();});});
 
@@ -750,7 +760,9 @@ var WD={ar:['أحد','إثن','ثلا','أرب','خمي','جمع','سبت'],en:[
 var now0=new Date(),curY=now0.getFullYear(),curM=now0.getMonth();
 function pad2(n){return (n<10?'0':'')+n;}
 function ds(y,m,d){return y+'-'+pad2(m+1)+'-'+pad2(d);}
-function dayPnl(k){var a=TRADES[k]||[],s=0;for(var i=0;i<a.length;i++)s+=a[i];return s;}
+function tp(x){return (x&&typeof x==='object')?(x.p||0):(x||0);}
+function tn(x){return (x&&typeof x==='object')?(x.n||''):'';}
+function dayPnl(k){var a=TRADES[k]||[],s=0;for(var i=0;i<a.length;i++)s+=tp(a[i]);return s;}
 function cf(n){if(!n)return '$0';var s=n<0?'-':'+';var a=Math.abs(n);if(a>=1000)return s+'$'+(a/1000).toFixed(a%1000?1:0)+'k';return s+'$'+Math.round(a);}
 function loc(){return LANG==='de'?'de-DE':(LANG==='ar'?'ar':'en-US');}
 function renderCal(){
@@ -784,12 +796,22 @@ var selDay=null;
 function openDay(key){selDay=key;document.getElementById('mDate').textContent=key;renderDay();document.getElementById('calModal').classList.add('open');}
 function renderDay(){var arr=TRADES[selDay]||[],list=document.getElementById('mList');list.innerHTML='';
   if(!arr.length){var e=document.createElement('div');e.className='sheet-empty';e.textContent=t('cal_notrades');list.appendChild(e);}
-  arr.forEach(function(pl,i){var r=document.createElement('div');r.className='trow';
-    var a=document.createElement('div');a.className='amt '+(pl>=0?'pos':'neg');a.textContent=cf(pl);
+  arr.forEach(function(it,i){var pl=tp(it),note=tn(it);var r=document.createElement('div');r.className='trow';
+    var info=document.createElement('div');info.className='tinfo';
+    var a=document.createElement('div');a.className='amt '+(pl>=0?'pos':'neg');a.textContent=cf(pl);info.appendChild(a);
+    if(note){var nn=document.createElement('div');nn.className='tnote';nn.textContent=note;info.appendChild(nn);}
     var del=document.createElement('button');del.textContent='🗑';del.addEventListener('click',function(){arr.splice(i,1);if(!arr.length)delete TRADES[selDay];else TRADES[selDay]=arr;saveTrades();renderDay();renderCal();});
-    r.appendChild(a);r.appendChild(del);list.appendChild(r);});
+    r.appendChild(info);r.appendChild(del);list.appendChild(r);});
   var tot=dayPnl(selDay),te=document.getElementById('mTotal');te.textContent=cf(tot);te.style.color=tot>=0?'var(--buy)':'var(--danger)';}
-document.getElementById('mAdd').addEventListener('click',function(){var inp=document.getElementById('mPnl'),v=parseFloat(inp.value);if(isNaN(v)){inp.focus();return;}if(!TRADES[selDay])TRADES[selDay]=[];TRADES[selDay].push(v);saveTrades();inp.value='';renderDay();renderCal();});
+var WL='win';
+function setWL(x){WL=x;document.getElementById('wlWin').classList.toggle('active',x==='win');document.getElementById('wlLoss').classList.toggle('active',x==='loss');}
+document.getElementById('wlWin').addEventListener('click',function(){setWL('win');});
+document.getElementById('wlLoss').addEventListener('click',function(){setWL('loss');});
+document.getElementById('mAdd').addEventListener('click',function(){var inp=document.getElementById('mPnl'),note=document.getElementById('mNote'),v=parseFloat(inp.value);
+  if(isNaN(v)||v<0){inp.focus();return;}
+  var signed=WL==='loss'?-Math.abs(v):Math.abs(v);
+  if(!TRADES[selDay])TRADES[selDay]=[];TRADES[selDay].push({p:signed,n:(note.value||'').trim()});
+  saveTrades();inp.value='';note.value='';renderDay();renderCal();});
 document.getElementById('mPnl').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('mAdd').click();});
 document.getElementById('mClose').addEventListener('click',function(){document.getElementById('calModal').classList.remove('open');});
 document.getElementById('calModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
@@ -832,7 +854,7 @@ document.getElementById('calNext').addEventListener('click',function(){curM++;if
 })();
 
 /* ===== growth / stats / backup ===== */
-function allTradesFlat(){var out=[];for(var k in TRADES){if(TRADES.hasOwnProperty(k))for(var i=0;i<TRADES[k].length;i++)out.push(TRADES[k][i]);}return out;}
+function allTradesFlat(){var out=[];for(var k in TRADES){if(TRADES.hasOwnProperty(k))for(var i=0;i<TRADES[k].length;i++)out.push(tp(TRADES[k][i]));}return out;}
 function sortedDays(){var ks=[];for(var k in TRADES){if(TRADES.hasOwnProperty(k)&&TRADES[k].length)ks.push(k);}ks.sort();return ks;}
 function renderGrowth(){
   if(!document.getElementById('statGrid'))return;
